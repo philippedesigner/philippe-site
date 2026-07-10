@@ -8,8 +8,8 @@ export type Entry = {
   linkLabel: string;
   linkHref: string;
   // One or more screenshots/photos for this entry. Optional — omit for a
-  // text-only entry. Multiple images stack vertically, full-bleed width,
-  // each separated by a hairline rule spanning the full screen.
+  // text-only entry. Multiple images stack vertically, left-aligned with
+  // the rest of the section, capped at 200px tall.
   images?: string[];
   description?: string;
 };
@@ -18,55 +18,84 @@ export const bio = {
   name: "Philippe Schroeder",
   photo: "/images/profile.jpg",
   intro:
-    "I am a wine lover, user experience designer & creative technologist exploring how the design of technology impacts society.",
+    "Product designer, strategist, and entrepreneur, I have spent the last years building products and innovation strategies at the intersection of technology, human sciences, and AI.",
   background:
-    "Background in Computer Science, UX design & AI, with 8 years of experience in photography, and 5 years in freelance design & development across multiple industries, from start-ups to large-scale companies like adidas. Interested in solving complex problems and aligning tech with humane values and goals.",
+    "I have 6+ years of experience building AI-first digital products and innovation strategies for startups and established companies. I manage projects with many stakeholders, being responsible for deep user research, synthesizing complexity into clear insights, and combining insights, tech expertise, and regulatory constraints into the design of digital products or concept proposals. I have domain experience across healthtech, fintech, manufacturing, IoT, and Media. I am particularly curious about how to create responsible AI technology that solves complex societal and individual problems.",
   tags: [
-    "Slowness",
+    "Curiosity",
     "Reflective Practice",
     "Connection to Nature",
     "Self-experimenting",
     "Collaboration",
-    "Open-mindedness",
+    "Intentionality",
   ],
 };
 
 export const workItems: Entry[] = [
   {
-    role: "Founder, Designer, Developer",
-    linkLabel: "@Postscript Studio (WIP)",
-    linkHref: "https://example.com",
-    images: ["/images/work-postscript.jpg"],
+    role: "Founder, Strategist, Designer",
+    linkLabel: "@Postscript Studio",
+    linkHref: "https://postscript.studio",
+    images: ["/images/postscript.jpg"],
+    description: "A user-centered design studio based in Luxembourg spanning user research, product design, and concept development.",
   },
   {
     role: "Photographer",
     linkLabel: "@photosbyphilippe",
     linkHref: "https://example.com",
-    images: ["/images/work-photography.jpg"],
+    images: ["/images/wedding.jpg"],
+    description: "Intentional travel, campaign and wedding photography. Currently only taking friends or past clients :)",
+  },
+  {
+    role: "Founding Product Designer",
+    linkLabel: "@Frameway (2026)",
+    images: ["/images/frameway.jpg"],
+    linkHref: "https://frameway.ai",
+
+  },
+   {
+    role: "Founding Product Designer",
+    linkLabel: "@Manex AI (2024-2025)",
+    linkHref: "https://www.manex.ai/en",
   },
   {
     role: "UX Designer",
     linkLabel: "@adidas (2021–22)",
-    linkHref: "https://example.com",
+    linkHref: "https://adidas.com",
   },
   {
-    role: "UX Designer",
+    role: "Marketing Manager",
     linkLabel: "@Microsoft (2020)",
-    linkHref: "https://example.com",
+    linkHref: "https://microsoft.com",
   },
 ];
 
 export const projectItems: Entry[] = [
   {
     role: "Creator",
-    linkLabel: "@www.humanetech.design",
-    linkHref: "https://example.com",
-    description: "A public standard for human-aligned AI product design.",
+    linkLabel: "@Humane Tech Design Guidelines",
+    linkHref: "https://philippeschroeder.notion.site/Responsible-Tech-Design-Guidelines-f223c19a06df4e94943e46d3da41c25e",
+    images: ["/images/guidelines.webp"],
+    description: "A collaborative standard for human-aligned AI product design.",
+  },
+   {
+    role: "Creator",
+    linkLabel: "@Shutterclub",
+    linkHref: "https://shutterclub.lu",
+    images: ["/images/shutterclub.png"],
+    description: "A rental store for unique cameras.",
+  },
+    {
+    role: "Co-creator",
+    linkLabel: "@umbok (2025)",
+    linkHref: "https://www.instagram.com/umbok.352/",
+    images: ["/images/umbok.jpg"],
+    description: "A 1-month pop-up shop and event space.",
   },
   {
     role: "Creator",
-    linkLabel: "@AIxDesign",
-    linkHref: "https://example.com",
+    linkLabel: "@humanaligned.eu (coming soon)",
+    linkHref: "#",
   },
 ];
 
@@ -74,17 +103,17 @@ export const contributionItems: Entry[] = [
   {
     role: "Researcher, Writer (volunteer)",
     linkLabel: "@All Tech Is Human",
-    linkHref: "https://example.com",
+    linkHref: "https://alltechishuman.org",
   },
   {
     role: "Researcher, Writer (volunteer)",
     linkLabel: "@AIxDesign",
-    linkHref: "https://example.com",
+    linkHref: "https://aixdesign.co",
   },
   {
     role: "Writer",
     linkLabel: "@Medium",
-    linkHref: "https://example.com",
+    linkHref: "https://medium.com/@philippeschroeder",
   },
 ];
 
@@ -100,3 +129,17 @@ export const galleryImages: string[] = [
 ];
 
 export const contactEmail = "hello@philippeschroeder.com";
+
+// Shown on the Contact tab. Add/remove entries as needed — label is what's
+// displayed, href is where it links to.
+export const socialLinks: { label: string; href: string }[] = [
+  { label: "LinkedIn", href: "https://lu.linkedin.com/in/philippe-schroeder-1aa186177" },
+  { label: "Instagram", href: "https://www.instagram.com/philippeschroeder/" },
+];
+
+// A scheduling link (Calendly, Cal.com, etc.) shown as a "book a slot"
+// call-to-action on the Contact tab. Set href to "" to hide this block.
+export const meetingLink = {
+  label: "Book a call",
+  href: "https://cal.com/philippeschroeder",
+};

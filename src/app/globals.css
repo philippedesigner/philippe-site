@@ -1,184 +1,327 @@
 :root {
-  --bg: #ffffff;
+  --bg: #fbfaf8;
   --fg: #111111;
   --muted: #6b6b6b;
   --line: #e4e4e4;
-  --accent: #ff5a1f;
-  --accent-fg: #111111;
-  --tag-bg: #f2f2f2;
-  --cursor-color: #111111;
+  --accent: #f3a038;
+  --accent-fg: #000000;
+  --tag-bg: #d9d9d9;
+  --tag-fg: #333333;
   --img-bg: #ececec;
+  --frame: 0.625rem;
+  --img-radius: 0.375rem;
 }
 html[data-theme="dark"] {
   --bg: #111111;
   --fg: #f2f2f2;
   --muted: #9a9a9a;
   --line: #2a2a2a;
-  --accent: #ff5a1f;
-  --accent-fg: #111111;
+  --accent: #f3a038;
+  --accent-fg: #000000;
   --tag-bg: #1e1e1e;
-  --cursor-color: #f2f2f2;
+  --tag-fg: #cfcfcf;
   --img-bg: #1e1e1e;
+  --frame: 0.625rem;
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
-html { overflow-x: hidden; } /* required for the full-bleed 100vw image trick below */
+html { overflow-x: hidden; scroll-behavior: smooth; }
 body {
-  /* FONT SETUP: var(--font-body) picks up your custom font automatically
-     once it's wired up in layout.tsx — nothing else to change here. */
+  position: relative;
+  z-index: 0;
   font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif;
   background: var(--bg);
   color: var(--fg);
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.5;
-  transition: background .35s ease, color .35s ease;
+  transition: background .35s ease, color .35s ease, border-color .35s ease;
   min-height: 100vh;
   overflow-x: hidden;
 }
+/* Frame drawn as its own layer (rather than body's actual border) so it can
+   sit above the noise overlay, which itself sits behind all page content. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  border: var(--frame) solid #000;
+  box-sizing: border-box;
+  pointer-events: none;
+}
 
 @media (hover: hover) and (pointer: fine) {
-  body { cursor: none; }
+  body, a, button, [data-cursor-target] { cursor: none; }
   .cursor-dot {
     position: fixed;
     top: 0; left: 0;
-    width: 22px; height: 22px;
+    width: 1.375rem;
+    height: 1.375rem;
     border-radius: 50%;
-    background: var(--cursor-color);
+    background: #000;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
-    transition: width .18s ease, height .18s ease, background .35s ease;
-    mix-blend-mode: exclusion;
+    transition: width .18s ease, height .18s ease, opacity .18s ease;
   }
-  .cursor-dot.hovering { width: 8px; height: 8px; }
 }
 
 a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 2px; }
 a:hover { text-decoration-color: currentColor; }
 
-.wrap { max-width: 1240px; margin: 0 auto; padding: 48px 32px 32px; }
+/* NOISE / GRAIN TEXTURE OVERLAY */
+.noise-overlay {
+  /* Oversized (larger than the viewport) so the noiseShift animation can
+     translate it without ever exposing its own edges within the viewport.
+     Negative z-index keeps it behind all normal page content/photos —
+     a background texture, not a foreground layer. */
+  position: fixed;
+  inset: -20%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .35;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 10rem 10rem;
+  animation: noiseShift 8s steps(8) infinite;
+}
+/* Overlay blend mode collapses to a near no-op on backgrounds this close to
+   pure white or pure black, so light/dark theme use plain alpha blending of
+   black or (inverted-to-white) grain instead, which stays visible at both
+   extremes. */
+html[data-theme="dark"] .noise-overlay { filter: invert(1); }
+@keyframes noiseShift {
+  0% { transform: translate(0, 0); }
+  12.5% { transform: translate(-6%, 4%); }
+  25% { transform: translate(4%, -8%); }
+  37.5% { transform: translate(-8%, 2%); }
+  50% { transform: translate(6%, 6%); }
+  62.5% { transform: translate(-4%, -6%); }
+  75% { transform: translate(8%, -2%); }
+  87.5% { transform: translate(-6%, -4%); }
+  100% { transform: translate(0, 0); }
+}
+
+.wrap {
+  max-width: 90rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 1rem + 2vw, 2.5rem) clamp(1rem, 0.5rem + 2vw, 1.375rem) 2rem;
+}
 
 /* ---------- THREE-COLUMN GRID ---------- */
 /* Outer grid: About ~1/3, Tabs+Content ~2/3 */
 .layout-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: 64px;
+  gap: clamp(2rem, 1rem + 3vw, 3rem);
   align-items: start;
 }
 /* Inner grid: narrow tab list + content, inside the "2/3" track */
 .tabs-content-wrap {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: minmax(7.5rem, 10.625rem) minmax(0, 1fr);
+  gap: clamp(2rem, 1rem + 3vw, 4rem);
   align-items: start;
 }
 
 /* COLUMN 1 — ABOUT */
-.col-about { max-width: 360px; }
+.col-about { max-width: 26.25rem; }
 .name-badge {
   display: inline-block;
   font-weight: 700;
-  letter-spacing: .02em;
-  padding: 4px 10px;
+  letter-spacing: .01em;
+  padding: 0.1875rem 0.375rem;
   background: var(--accent);
   color: var(--accent-fg);
-  margin-bottom: 20px;
-  font-size: 13px;
+  margin-bottom: 0.875rem;
+  font-size: 1rem;
   text-transform: uppercase;
+  text-decoration: none;
 }
-.bio-photo-wrap { margin-bottom: 20px; background: var(--img-bg); }
-.bio-photo-wrap img { width: 100%; height: auto; display: block; filter: grayscale(1); }
-.bio p { margin: 0 0 18px; }
+.bio-photo-wrap { margin-bottom: 1.25rem; background: var(--img-bg); border-radius: var(--img-radius); overflow: hidden; }
+.bio-photo-wrap img { width: 100%; height: auto; display: block; }
+.bio p { margin: 0 0 1.7em; font-size: 0.875rem; line-height: 1.2; }
 .bio p.muted { color: var(--muted); }
-.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.tags span { background: var(--tag-bg); color: var(--muted); font-size: 12px; padding: 6px 10px; border-radius: 3px; }
+.tags { display: flex; flex-wrap: wrap; gap: 0.625rem; margin-top: 1.25rem; }
+.tags span {
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+  font-size: 0.75rem;
+  padding: 0.1875rem 0.3125rem;
+  border-radius: 0.1875rem;
+  transition: background .18s ease, color .18s ease;
+}
+.tags span:hover { background: var(--tag-fg); color: var(--tag-bg); }
 
 /* COLUMN 2 — TAB LIST */
-.col-tabs { display: flex; flex-direction: column; }
+.col-tabs { display: flex; flex-direction: column; gap: 0.5rem; }
 .tab-link {
   display: block;
-  padding: 14px 12px;
-  border-bottom: 1px solid var(--line);
+  padding: 0.25rem 0.375rem;
   text-decoration: none;
   font-weight: 700;
-  letter-spacing: .04em;
+  letter-spacing: .01em;
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 1rem;
 }
-.col-tabs .tab-link:first-child { border-top: 1px solid var(--line); }
 .tab-link.active { background: var(--accent); color: var(--accent-fg); }
 .tab-link:not(.active):hover { background: var(--accent); color: var(--accent-fg); }
+.tab-link, .name-badge { border-radius: 0.25rem; }
 .about-link { display: none; } /* only shown on mobile, see below */
 
+/* Hover feedback follows the trailing cursor dot (.cursor-hover, set in
+   CustomCursor once the eased dot position actually reaches the element)
+   instead of the raw :hover pseudo-class, so highlights don't fire before
+   the visual cursor arrives. Placed after the base rules above so it wins
+   the cascade tie-break (equal specificity, later source order). */
+@media (hover: hover) and (pointer: fine) {
+  .tab-link:not(.active):hover { background: none; color: inherit; }
+  .tab-link:not(.active).cursor-hover { background: var(--accent); color: var(--accent-fg); }
+  .tags span:hover { background: var(--tag-bg); color: var(--tag-fg); }
+  .tags span.cursor-hover { background: var(--tag-fg); color: var(--tag-bg); }
+}
+
 /* COLUMN 3 — CONTENT */
-.col-content { animation: fadeIn .3s ease; }
+/* Scrolls internally when it's taller than the viewport — the About
+   column and tab list stay put. Applies to every tab, not just gallery. */
+.col-content {
+  animation: fadeIn .3s ease;
+  max-height: calc(100vh - 12.5rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.25rem;
+}
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-.entry { margin-bottom: 32px; }
+.entry { margin-bottom: 2rem; }
 .entry:last-child { margin-bottom: 0; }
-.entry .role { font-weight: 700; margin-bottom: 2px; }
-.entry .link { font-size: 14px; display: inline-block; margin-bottom: 8px; }
-.entry .desc { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
-
-/* Full-bleed screenshots: break out of .wrap to span the entire viewport
-   width, stacked vertically, each separated by a hairline the same width
-   as the rest of the page's rules. */
-.entry-image-bleed {
-  width: 100vw;
+.entry .role, .contact-block .role { font-weight: 700; margin-bottom: 0.125rem; }
+.link {
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  margin-top: 14px;
-  margin-bottom: 14px;
-  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
 }
-.entry-image-row {
-  border-bottom: 1px solid var(--line);
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.15em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .32s ease;
+}
+.link.link-in::after { transform-origin: left; transform: scaleX(1); }
+.link.link-out::after { transform-origin: right; transform: scaleX(0); }
+.link-arrow {
+  display: inline-flex;
+  width: 0.85em;
+  height: 0.85em;
+  flex: none;
+  opacity: 0;
+  transform: translate(-0.4em, 0.4em);
+}
+.link-arrow.entering { animation: linkArrowIn .28s ease forwards; }
+.link-arrow.leaving { animation: linkArrowOut .28s ease forwards; }
+@keyframes linkArrowIn {
+  to { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes linkArrowOut {
+  to { transform: translate(0.4em, -0.4em); opacity: 0; }
+}
+.entry .desc { color: var(--muted); font-size: 0.875rem; margin-bottom: 0.75rem; }
+
+.entry-images { display: flex; flex-direction: column; gap: 0.625rem; margin-top: 0.625rem; }
+.entry-image {
+  height: 12.5rem;
+  width: 100%;
+  display: block;
   background: var(--img-bg);
+  border-radius: var(--img-radius);
+  object-fit: cover;
+  object-position: center;
 }
-.entry-image-row img { width: 100%; height: auto; display: block; }
 
-.gallery-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-.gallery-item { flex: 0 0 auto; background: var(--img-bg); }
-.gallery-item img { height: 260px; width: auto; object-fit: cover; display: block; }
+.gallery-scroll { display: flex; flex-direction: column; gap: 0.875rem; }
+.gallery-item { background: var(--img-bg); border-radius: var(--img-radius); overflow: hidden; }
+.gallery-item img { width: 100%; height: auto; display: block; }
 
-/* THEME TOGGLE */
+/* CONTACT SECTION */
+.contact-section { display: flex; flex-direction: column; gap: 1.75rem; }
+.contact-socials { display: flex; flex-wrap: wrap; gap: 0.5rem 1.125rem; }
+
+/* FIXED CORNER ICON */
 .theme-toggle {
   position: fixed;
-  right: 28px; bottom: 28px;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--line);
-  background: var(--bg);
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: 2.5rem; height: 2.5rem;
+  border: none;
+  background: transparent;
   color: var(--fg);
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 1.75rem;
+  line-height: 1;
   z-index: 500;
+  cursor: pointer;
 }
 
 /* ---------- MOBILE: collapse to a single column ---------- */
 @media (max-width: 768px) {
-  .wrap { padding: 28px 20px 100px; }
+  :root, html[data-theme="dark"] { --frame: 0.25rem; }
+
+  /* The outer black frame lives on body's border. body itself never
+     scrolls on mobile — only .wrap does — so the frame stays visually
+     fixed in place while the content underneath scrolls independently. */
+  html, body { height: 100dvh; overflow: hidden; }
+
+  .wrap {
+    height: 100dvh;
+    max-width: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+    padding: 1.5rem 1rem calc(5.5rem + var(--frame));
+  }
 
   .layout-grid { display: block; }
   .col-about { max-width: none; }
 
-  .tabs-content-wrap { display: block; margin-top: 28px; }
+  .tabs-content-wrap { display: block; margin-top: 1.75rem; }
 
+  /* Bottom nav bar: fixed vertically, horizontally scrollable, inset
+     inside the fixed outer frame. */
   .col-tabs {
+    position: fixed;
+    left: var(--frame);
+    right: var(--frame);
+    bottom: var(--frame);
+    z-index: 400;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 4px 14px;
-    padding-top: 18px;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.25rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg);
     border-top: 1px solid var(--line);
+    padding: 0.625rem 0.75rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  .col-tabs::-webkit-scrollbar { display: none; }
   .tab-link {
-    border: none !important;
-    padding: 4px 6px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    padding: 0.375rem 0.625rem;
   }
   .about-link { display: inline-block; }
 
@@ -187,4 +330,17 @@ a:hover { text-decoration-color: currentColor; }
 
   /* Tab page: hide About, show only the nav row + active content */
   .page-root[data-home="false"] .col-about { display: none; }
+
+  .col-content { max-height: none; overflow-y: visible; padding-right: 0; }
+
+  /* Theme toggle rides along as the last item in the bottom nav bar
+     instead of floating as a separate fixed corner button. */
+  .theme-toggle {
+    position: static;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.375rem;
+    margin-left: 0.25rem;
+  }
 }
