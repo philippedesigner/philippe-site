@@ -14,6 +14,8 @@ export type Entry = {
   description?: string;
 };
 
+export const greetings = ["Moien!", "Bonjour!", "Hallo!", "Hello!"];
+
 export const bio = {
   name: "Philippe Schroeder",
   photo: "/images/profile.jpg",

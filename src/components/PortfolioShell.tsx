@@ -5,6 +5,7 @@ import Image from "next/image";
 import ScrambleLabel from "./ScrambleLabel";
 import ThemeToggle from "./ThemeToggle";
 import LinkArrow from "./LinkArrow";
+import Greeting from "./Greeting";
 import {
   bio,
   workItems,
@@ -219,13 +220,16 @@ export default function PortfolioShell({ activeTab, isHome }: Props) {
         <div className="layout-grid">
           {/* COLUMN 1 — ABOUT */}
           <div className="col-about">
-            <NavLink
-              href="/"
-              className="name-badge"
-              onHoverChange={(h) => setHovered((prev) => (h ? "name" : prev === "name" ? null : prev))}
-            >
-              <ScrambleLabel text={bio.name} className="label" active={hovered === "name"} />
-            </NavLink>
+            <div className="name-badge-wrap">
+              <NavLink
+                href="/"
+                className="name-badge"
+                onHoverChange={(h) => setHovered((prev) => (h ? "name" : prev === "name" ? null : prev))}
+              >
+                <ScrambleLabel text={bio.name} className="label" active={hovered === "name"} />
+              </NavLink>
+              <Greeting />
+            </div>
             <div className="bio-photo-wrap">
               <Image
                 className="bio-photo"

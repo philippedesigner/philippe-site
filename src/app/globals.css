@@ -126,6 +126,7 @@ html[data-theme="dark"] .noise-overlay { filter: invert(1); }
 
 /* COLUMN 1 — ABOUT */
 .col-about { max-width: 26.25rem; }
+.name-badge-wrap { display: flex; align-items: center; gap: 2rem; margin-bottom: 0.875rem; }
 .name-badge {
   display: inline-block;
   font-weight: 700;
@@ -133,10 +134,28 @@ html[data-theme="dark"] .noise-overlay { filter: invert(1); }
   padding: 0.1875rem 0.375rem;
   background: var(--accent);
   color: var(--accent-fg);
-  margin-bottom: 0.875rem;
   font-size: 1rem;
   text-transform: uppercase;
   text-decoration: none;
+}
+.greeting-tag {
+  display: inline-flex;
+  font-weight: 700;
+  letter-spacing: .01em;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.greeting-letter {
+  display: inline-block;
+  opacity: 0;
+  animation: greetingLetterIn .3s ease forwards;
+}
+@keyframes greetingLetterIn {
+  from { opacity: 0; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .bio-photo-wrap { margin-bottom: 1.25rem; background: var(--img-bg); border-radius: var(--img-radius); overflow: hidden; }
 .bio-photo-wrap img { width: 100%; height: auto; display: block; }
@@ -218,7 +237,12 @@ html[data-theme="dark"] .noise-overlay { filter: invert(1); }
   transition: transform .32s ease;
 }
 .link.link-in::after { transform-origin: left; transform: scaleX(1); }
-.link.link-out::after { transform-origin: right; transform: scaleX(0); }
+/* :not(.link-in) guards against both classes being applied at once (the
+   custom-cursor "cursorover"/"cursorout" events and native mouseenter/
+   mouseleave can fire out of order relative to each other) — without this,
+   equal specificity + source order let link-out silently win and hide the
+   underline even while link-in is also present. */
+.link.link-out:not(.link-in)::after { transform-origin: right; transform: scaleX(0); }
 .link-arrow {
   display: inline-flex;
   width: 0.85em;
