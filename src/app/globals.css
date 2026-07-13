@@ -302,13 +302,12 @@ html[data-theme="dark"] .noise-overlay { filter: invert(1); }
 
   /* The outer black frame lives on body's border. body itself never
      scrolls on mobile — only .wrap does — so the frame stays visually
-     fixed in place while the content underneath scrolls independently. */
-  html, body { height: 100dvh; overflow: hidden; }
-
-  /* Plain white instead of the default transparent canvas — on iPhone
-     Safari, the area behind the bottom URL bar can reveal this, and it
-     should read as a solid white sliver rather than see-through. */
-  html { background: #fff; }
+     fixed in place while the content underneath scrolls independently.
+     position:fixed (rather than height:100dvh + overflow:hidden) avoids a
+     Safari repaint bug where scrolled content briefly peeks through the
+     clipped edge while the collapsible bottom URL bar animates. */
+  html { overflow: hidden; background: var(--bg); }
+  body { position: fixed; inset: 0; overflow: hidden; }
 
   /* Tapping a link on touch devices triggers :hover, which would
      otherwise play the desktop hover animation on tap. Disabled here;
