@@ -20,7 +20,7 @@ export const bio = {
   name: "Philippe Schroeder",
   photo: "/images/profile.jpg",
   intro:
-    "Product designer, strategist, and entrepreneur, I have spent the last years building products and innovation strategies at the intersection of technology, human sciences, and AI.",
+    "Innovator, strategist, and product designer, I have spent the last years building products and innovation strategies at the intersection of technology, human behavior, and AI.",
   background:
     "I have 6+ years of experience building AI-first digital products and innovation strategies for startups and established companies. I manage projects with many stakeholders, being responsible for deep user research, synthesizing complexity into clear insights, and combining insights, tech expertise, and regulatory constraints into the design of digital products or concept proposals. I have domain experience across healthtech, fintech, manufacturing, IoT, and Media. I am particularly curious about how to create responsible AI technology that solves complex societal and individual problems.",
   tags: [
